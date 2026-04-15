@@ -1,0 +1,27 @@
+name: Crypto Monitor
+
+on:
+  schedule:
+    # 每 15 分钟运行一次
+    - cron: '*/15 * * * *'
+  workflow_dispatch: # 允许你手动点击运行按钮
+
+jobs:
+  run_script:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: pip install ccxt pandas pandas_ta requests
+
+      - name: Execute Monitor
+        env:
+          WECHAT_KEY: ${{ secrets.WECHAT_KEY }} # 这里读取你在 Settings 存的飞书 Token
+        run: python monitor.py
